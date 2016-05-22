@@ -25,7 +25,7 @@ namespace Generalized_Backup_Tool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\Program Files\\\\Steam")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Steam")]
         public string SteamPath {
             get {
                 return ((string)(this["SteamPath"]));
@@ -61,7 +61,7 @@ namespace Generalized_Backup_Tool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\Documents\\\\Game Backups")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Documents\\Game Backups")]
         public string BackupPath {
             get {
                 return ((string)(this["BackupPath"]));

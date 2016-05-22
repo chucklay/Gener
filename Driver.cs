@@ -10,12 +10,13 @@ namespace Generalized_Backup_Tool
     {
 
         static List<Game> games;
+        static Defaults defaults;
 
         static void Main()
         {
 
             // Load defaults.
-            Defaults defaults = new Defaults();
+            defaults = new Defaults();
 
             // Load list of games.
             if (System.IO.File.Exists(@"Games.bin"))
@@ -49,13 +50,58 @@ namespace Generalized_Backup_Tool
                         displayGames();
                         break;
                     case 3:
-                        //showSettings();
+                        showSettings();
                         break;
                     case 4:
                         Environment.Exit(0);
                         break;
                     default:
                         System.Console.Write("Unrecognized entry\n\n");
+                        break;
+                }
+            }
+        }
+
+        /**
+         * Show settings, and allow the user to edit them.
+         */
+        public static void showSettings()
+        {
+            int selection = -1;
+            while (selection != 5)
+            {
+                System.Console.Clear();
+                System.Console.WriteLine("Current settings:");
+                System.Console.WriteLine("1) Steam path: " + defaults.getSteamPath());
+                System.Console.WriteLine("2) Backup path: " + defaults.getBackupPath());
+                System.Console.WriteLine("3) Number of saves: " + defaults.getNumSaves());
+                System.Console.WriteLine("4) Save interval: " + defaults.getSaveInterval() + " minutes");
+                System.Console.WriteLine("5) Main menu");
+                System.Console.Write("Select a setting to change:\n>");
+                selection = int.Parse(System.Console.ReadLine());
+
+                switch (selection)
+                {
+                    case 1:
+                        System.Console.Write("Enter a new steam path:\n>");
+                        defaults.setSteamPath(System.Console.ReadLine());
+                        break;
+                    case 2:
+                        System.Console.Write("Enter a new backup path:\n>");
+                        defaults.setBackupPath(System.Console.ReadLine());
+                        break;
+                    case 3:
+                        System.Console.Write("How many save slots would you like\n>");
+                        defaults.setNumSaves(int.Parse(System.Console.ReadLine()));
+                        break;
+                    case 4:
+                        System.Console.Write("How many minutes between saves\n>");
+                        defaults.setBackupInterval(int.Parse(System.Console.ReadLine()));
+                        break;
+                    case 5:
+                        break;
+                    default:
+                        System.Console.WriteLine("Entry not recognized.");
                         break;
                 }
             }

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SteamPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\\Program Files\\Steam</Value>
+      <Value Profile="(Default)">C:\Program Files\Steam</Value>
     </Setting>
     <Setting Name="NumSaves" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
@@ -12,7 +12,7 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="BackupPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\\Documents\\Game Backups</Value>
+      <Value Profile="(Default)">C:\Documents\Game Backups</Value>
     </Setting>
   </Settings>
 </SettingsFile>
