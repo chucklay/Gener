@@ -28,6 +28,10 @@ namespace Generalized_Backup_Tool
                 }
             }
 
+            //Kick off a new thread to start backing up games.
+            System.Threading.Thread backupThread = new System.Threading.Thread(new System.Threading.ThreadStart(backUpGames));
+            backupThread.Start();
+
             // Main program loop:
 
             while (true)
@@ -40,6 +44,7 @@ namespace Generalized_Backup_Tool
                 System.Console.Write("4) Exit\n");
                 
                 int input = int.Parse(System.Console.ReadLine());
+
 
                 switch (input)
                 {
@@ -60,6 +65,82 @@ namespace Generalized_Backup_Tool
                         break;
                 }
             }
+        }
+
+        /**
+         * Back up games in a background thread.
+         */
+        public static void backUpGames()
+        {
+            string cName = System.Environment.MachineName;
+            System.Diagnostics.Process[] processList;
+            bool found = false;
+            int i;
+            int currentSlot;
+            List<string> pNameList = new List<string>();
+
+            while (true)
+            {
+                processList = System.Diagnostics.Process.GetProcesses(cName);
+
+                // Get the names of all running processes.
+                for (i = 0; i < processList.Count(); i++)
+                {
+                    pNameList.Add(processList.ElementAt(i).ProcessName);
+                }
+
+                for (i = 0; i < games.Count; i++)
+                {
+                    if (pNameList.Contains(games.ElementAt(i).processName))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    //Game at [i] is running!
+                    currentSlot = games.ElementAt(i).currentSlot;
+                    string backupPath = defaults.getBackupPath() + "\\" + games.ElementAt(i).gameName + "\\" + currentSlot;
+                    List<string> bFiles = games.ElementAt(i).fileNames;
+                    string currentFileName = bFiles + "_" + currentSlot;
+
+                    for (int k = 0; k < bFiles.Count; k++)
+                    {
+                        //Back up each file.
+                        string sPath = System.IO.Path.Combine(games.ElementAt(i).savePath, bFiles.ElementAt(k));
+                        string dPath = System.IO.Path.Combine(backupPath, bFiles.ElementAt(k));
+
+                        if (!System.IO.Directory.Exists(backupPath))
+                        {
+                            // Create the directory.
+                            System.IO.Directory.CreateDirectory(backupPath);
+                        }
+
+                        // Copy the files.
+                        System.IO.File.Copy(sPath, dPath, true);
+                    }
+
+                    System.Console.WriteLine("Save files backed up to slot " + currentSlot);
+
+                    currentSlot++;
+                    games.ElementAt(i).currentSlot = currentSlot;
+                    using (System.IO.Stream stream = System.IO.File.Open("games.bin", System.IO.FileMode.Create))
+                    {
+                        System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bin = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                        bin.Serialize(stream, games);
+                    }
+                    System.Threading.Thread.Sleep(new TimeSpan(0, defaults.getSaveInterval(), 0));
+                    continue;
+                }
+                else
+                {
+                    System.Console.WriteLine("No running games detected. Retrying in 3 minutes.");
+                    System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
+                }
+            }
+
+            return;
         }
 
         /**
@@ -242,7 +323,7 @@ namespace Generalized_Backup_Tool
             }
 
             // Create the game object, and add it to the list.
-            games.Add(new Game(dispName, gamePath, processName, fileNames));
+            games.Add(new Game(dispName, gamePath, processName, fileNames, 0));
 
             // Serialize and save.
             using (System.IO.Stream stream = System.IO.File.Open("games.bin", System.IO.FileMode.Create))
