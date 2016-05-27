@@ -288,20 +288,46 @@ namespace Generalized_Backup_Tool
         {
 
             // Get all of the required information.
-            // TODO add sanity checking.
 
             System.Console.Clear();
 
-            System.Console.Write("Enter the display name of the game:\n");
-            string dispName = System.Console.ReadLine();
+            bool validName = false;
+            string dispName = "";
+            while (!validName)
+            {
+                System.Console.Write("Enter the display name of the game:\n>");
+                dispName = System.Console.ReadLine();
+                if (dispName.Any(System.IO.Path.GetInvalidPathChars().Contains)){
+                    // The game name contains characters that cannot be used
+                    // in a directory path. Game names are automatically used
+                    // as the name of the folder where backups are stored.
+                    System.Console.WriteLine("Error: Game name contains invalid directory characters.");
+                }
+                else
+                {
+                    validName = true;
+                }
+            }
 
-            System.Console.Write("Enter the path to the game's save directory:\n");
-            string gamePath = System.Console.ReadLine();
+            bool validPath = false;
+            string gamePath = "";
+            while (!validPath)
+            {
+                System.Console.Write("Enter the path to the game's save directory:\n>");
+                gamePath = System.Console.ReadLine();
+                validPath = System.IO.Directory.Exists(gamePath);
+                if (!validPath)
+                {
+                    // Once GUI has been implemented, this error should not
+                    // be encountered.
+                    System.Console.WriteLine("Error: this path does not exist.");
+                }
+            }
 
-            System.Console.Write("Enter the name of the game's process:\n");
+            System.Console.Write("Enter the name of the game's process:\n>");
             string processName = System.Console.ReadLine();
 
-            System.Console.Write("Enter the names of the save files to back up (-1 to finish):\n");
+            System.Console.Write("Enter the names of the save files to back up (-1 to finish):\n>");
             List<string> fileNames = new List<string>();
             while (true)
             {

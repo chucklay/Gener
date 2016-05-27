@@ -9,10 +9,10 @@ namespace Generalized_Backup_Tool
     class Defaults
     {
 
-        private string steamPath;
-        private string backupPath;
-        private int numSaves;
-        private int saveInterval;
+        private string steamPath;               // Path to steam folder, will be used later to auto-detect games.
+        private string backupPath;              // Path to folder where backups will be stored. Will be created if it does not exist.
+        private int numSaves;                   // Number of rotating save slots to use 
+        private int saveInterval;               // Time between backups, in minutes.
 
         public Defaults()
         {
@@ -42,11 +42,19 @@ namespace Generalized_Backup_Tool
             return saveInterval;
         }
 
-        public void setSteamPath(string newPath)
+        public bool setSteamPath(string newPath)
         {
-            steamPath = newPath;
-            Properties.Settings.Default.SteamPath = steamPath;
-            Properties.Settings.Default.Save();
+            if (System.IO.Directory.Exists(newPath))
+            {
+                steamPath = newPath;
+                Properties.Settings.Default.SteamPath = steamPath;
+                Properties.Settings.Default.Save();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void setBackupPath(string newPath)
