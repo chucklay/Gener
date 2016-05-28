@@ -27,6 +27,10 @@ namespace Generalized_Backup_Tool
                     games = (List<Game>)bFormatter.Deserialize(stream);
                 }
             }
+            else
+            {
+                games = new List<Game>();
+            }
 
             //Kick off a new thread to start backing up games.
             System.Threading.Thread backupThread = new System.Threading.Thread(new System.Threading.ThreadStart(backUpGames));
