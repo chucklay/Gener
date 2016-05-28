@@ -108,17 +108,23 @@ namespace Generalized_Backup_Tool
                     for (int k = 0; k < bFiles.Count; k++)
                     {
                         //Back up each file.
-                        string sPath = System.IO.Path.Combine(games.ElementAt(i).savePath, bFiles.ElementAt(k));
-                        string dPath = System.IO.Path.Combine(backupPath, bFiles.ElementAt(k));
+                        try {
+                            string sPath = System.IO.Path.Combine(games.ElementAt(i).savePath, bFiles.ElementAt(k));
+                            string dPath = System.IO.Path.Combine(backupPath, bFiles.ElementAt(k));
 
-                        if (!System.IO.Directory.Exists(backupPath))
-                        {
-                            // Create the directory.
-                            System.IO.Directory.CreateDirectory(backupPath);
+                            if (!System.IO.Directory.Exists(backupPath))
+                            {
+                                // Create the directory.
+                                System.IO.Directory.CreateDirectory(backupPath);
+                            }
+
+                            // Copy the files.
+                            System.IO.File.Copy(sPath, dPath, true);
                         }
-
-                        // Copy the files.
-                        System.IO.File.Copy(sPath, dPath, true);
+                        catch(Exception e)
+                        {
+                            System.Console.WriteLine("Error backing up game. Please check all paths & file permissions.");
+                        }
                     }
 
                     System.Console.WriteLine("Save files backed up to slot " + currentSlot);
