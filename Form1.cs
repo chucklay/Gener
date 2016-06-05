@@ -16,5 +16,16 @@ namespace Generalized_Backup_Tool
         {
             InitializeComponent();
         }
+
+        private void GameList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addGameButton_Click(object sender, EventArgs e)
+        {
+            AddGame add = new AddGame();
+            add.Show();
+        }
     }
 }

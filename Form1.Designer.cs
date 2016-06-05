@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "Game 1"}, -1, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.GameList = new System.Windows.Forms.ListView();
+            this.addGameButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -45,6 +46,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.addGameButton);
             this.splitContainer1.Panel1.Controls.Add(this.GameList);
             this.splitContainer1.Size = new System.Drawing.Size(684, 511);
             this.splitContainer1.SplitterDistance = 228;
@@ -56,13 +58,25 @@
             this.GameList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GameList.GridLines = true;
             this.GameList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.GameList.Location = new System.Drawing.Point(0, 0);
             this.GameList.Name = "GameList";
             this.GameList.Size = new System.Drawing.Size(228, 511);
             this.GameList.TabIndex = 0;
             this.GameList.UseCompatibleStateImageBehavior = false;
             this.GameList.View = System.Windows.Forms.View.List;
+            this.GameList.SelectedIndexChanged += new System.EventHandler(this.GameList_SelectedIndexChanged);
+            // 
+            // addGameButton
+            // 
+            this.addGameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.addGameButton.Location = new System.Drawing.Point(0, 465);
+            this.addGameButton.Name = "addGameButton";
+            this.addGameButton.Size = new System.Drawing.Size(228, 46);
+            this.addGameButton.TabIndex = 1;
+            this.addGameButton.Text = "Add Game";
+            this.addGameButton.UseVisualStyleBackColor = true;
+            this.addGameButton.Click += new System.EventHandler(this.addGameButton_Click);
             // 
             // Form1
             // 
@@ -84,6 +98,7 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView GameList;
+        private System.Windows.Forms.Button addGameButton;
     }
 }
 
