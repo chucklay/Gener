@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Game 1"}, -1, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.GameList = new System.Windows.Forms.ListView();
             this.addGameButton = new System.Windows.Forms.Button();
+            this.GameList = new System.Windows.Forms.ListView();
+            this.gameImage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.gameName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -52,14 +52,31 @@
             this.splitContainer1.SplitterDistance = 228;
             this.splitContainer1.TabIndex = 0;
             // 
+            // addGameButton
+            // 
+            this.addGameButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.addGameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.addGameButton.Location = new System.Drawing.Point(0, 465);
+            this.addGameButton.Name = "addGameButton";
+            this.addGameButton.Size = new System.Drawing.Size(225, 46);
+            this.addGameButton.TabIndex = 1;
+            this.addGameButton.Text = "Add Game";
+            this.addGameButton.UseVisualStyleBackColor = true;
+            this.addGameButton.Click += new System.EventHandler(this.addGameButton_Click);
+            // 
             // GameList
             // 
+            this.GameList.Alignment = System.Windows.Forms.ListViewAlignment.SnapToGrid;
             this.GameList.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.GameList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.gameName,
+            this.gameImage});
             this.GameList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GameList.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GameList.GridLines = true;
-            this.GameList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
             this.GameList.Location = new System.Drawing.Point(0, 0);
+            this.GameList.MultiSelect = false;
             this.GameList.Name = "GameList";
             this.GameList.Size = new System.Drawing.Size(228, 511);
             this.GameList.TabIndex = 0;
@@ -67,16 +84,17 @@
             this.GameList.View = System.Windows.Forms.View.List;
             this.GameList.SelectedIndexChanged += new System.EventHandler(this.GameList_SelectedIndexChanged);
             // 
-            // addGameButton
+            // gameImage
             // 
-            this.addGameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.addGameButton.Location = new System.Drawing.Point(0, 465);
-            this.addGameButton.Name = "addGameButton";
-            this.addGameButton.Size = new System.Drawing.Size(228, 46);
-            this.addGameButton.TabIndex = 1;
-            this.addGameButton.Text = "Add Game";
-            this.addGameButton.UseVisualStyleBackColor = true;
-            this.addGameButton.Click += new System.EventHandler(this.addGameButton_Click);
+            this.gameImage.DisplayIndex = 0;
+            this.gameImage.Text = "Game Image";
+            this.gameImage.Width = 88;
+            // 
+            // gameName
+            // 
+            this.gameName.DisplayIndex = 1;
+            this.gameName.Text = "Game Name";
+            this.gameName.Width = 184;
             // 
             // Form1
             // 
@@ -99,6 +117,8 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView GameList;
         private System.Windows.Forms.Button addGameButton;
+        private System.Windows.Forms.ColumnHeader gameName;
+        private System.Windows.Forms.ColumnHeader gameImage;
     }
 }
 
