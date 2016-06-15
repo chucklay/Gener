@@ -49,27 +49,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddGame.cs">
+    <Compile Include="src\AddGame.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddGame.Designer.cs">
+    <Compile Include="src\AddGame.Designer.cs">
       <DependentUpon>AddGame.cs</DependentUpon>
     </Compile>
-    <Compile Include="App.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="Defaults.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="src\App.cs" />
+    <Compile Include="src\Game.cs" />
+    <Compile Include="src\Defaults.cs" />
+    <Compile Include="src\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="src\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
-    <EmbeddedResource Include="AddGame.resx">
+    <Compile Include="src\Settings.cs" />
+    <EmbeddedResource Include="src\AddGame.resx">
       <DependentUpon>AddGame.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="src\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -93,7 +93,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="questionmark.png" />
+    <EmbeddedResource Include="res\questionmark.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
