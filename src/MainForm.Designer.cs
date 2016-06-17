@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.addGameButton = new System.Windows.Forms.Button();
             this.GameList = new System.Windows.Forms.ListView();
             this.gameName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gameImage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.showOptionsButton = new System.Windows.Forms.Button();
+            this.pathBrowseButton = new System.Windows.Forms.Button();
             this.saveChangesButton = new System.Windows.Forms.Button();
             this.processNameTextBox = new System.Windows.Forms.TextBox();
             this.processNameLabel = new System.Windows.Forms.Label();
@@ -43,11 +47,19 @@
             this.gameNameTextBox = new System.Windows.Forms.TextBox();
             this.gameNameChangeLabel = new System.Windows.Forms.Label();
             this.GameLabel = new System.Windows.Forms.Label();
-            this.pathBrowseButton = new System.Windows.Forms.Button();
+            this.mainNotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.mainContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.mainContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -63,8 +75,8 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.pathBrowseButton);
-            this.splitContainer1.Panel2.Controls.Add(this.saveChangesButton);
             this.splitContainer1.Panel2.Controls.Add(this.processNameTextBox);
             this.splitContainer1.Panel2.Controls.Add(this.processNameLabel);
             this.splitContainer1.Panel2.Controls.Add(this.saveFilesTextBox);
@@ -124,15 +136,41 @@
             this.gameImage.Text = "Game Image";
             this.gameImage.Width = 88;
             // 
+            // showOptionsButton
+            // 
+            this.showOptionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.showOptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.showOptionsButton.Location = new System.Drawing.Point(3, 0);
+            this.showOptionsButton.Name = "showOptionsButton";
+            this.showOptionsButton.Size = new System.Drawing.Size(365, 46);
+            this.showOptionsButton.TabIndex = 11;
+            this.showOptionsButton.Text = "Show Options";
+            this.showOptionsButton.UseVisualStyleBackColor = true;
+            this.showOptionsButton.Click += new System.EventHandler(this.showOptionsButton_Click);
+            // 
+            // pathBrowseButton
+            // 
+            this.pathBrowseButton.Location = new System.Drawing.Point(314, 122);
+            this.pathBrowseButton.Name = "pathBrowseButton";
+            this.pathBrowseButton.Size = new System.Drawing.Size(99, 20);
+            this.pathBrowseButton.TabIndex = 10;
+            this.pathBrowseButton.Text = "Browse";
+            this.pathBrowseButton.UseVisualStyleBackColor = true;
+            this.pathBrowseButton.Visible = false;
+            this.pathBrowseButton.Click += new System.EventHandler(this.pathBrowseButton_Click);
+            // 
             // saveChangesButton
             // 
-            this.saveChangesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.saveChangesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.saveChangesButton.Enabled = false;
             this.saveChangesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveChangesButton.Location = new System.Drawing.Point(3, 514);
+            this.saveChangesButton.Location = new System.Drawing.Point(0, 0);
             this.saveChangesButton.Name = "saveChangesButton";
-            this.saveChangesButton.Size = new System.Drawing.Size(733, 46);
+            this.saveChangesButton.Size = new System.Drawing.Size(362, 46);
             this.saveChangesButton.TabIndex = 9;
             this.saveChangesButton.Text = "Save Changes";
             this.saveChangesButton.UseVisualStyleBackColor = true;
@@ -226,16 +264,45 @@
             this.GameLabel.Text = "Game Name Here";
             this.GameLabel.Visible = false;
             // 
-            // pathBrowseButton
+            // mainNotificationIcon
             // 
-            this.pathBrowseButton.Location = new System.Drawing.Point(314, 122);
-            this.pathBrowseButton.Name = "pathBrowseButton";
-            this.pathBrowseButton.Size = new System.Drawing.Size(99, 20);
-            this.pathBrowseButton.TabIndex = 10;
-            this.pathBrowseButton.Text = "Browse";
-            this.pathBrowseButton.UseVisualStyleBackColor = true;
-            this.pathBrowseButton.Visible = false;
-            this.pathBrowseButton.Click += new System.EventHandler(this.pathBrowseButton_Click);
+            this.mainNotificationIcon.ContextMenuStrip = this.mainContextMenu;
+            this.mainNotificationIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("mainNotificationIcon.Icon")));
+            this.mainNotificationIcon.Text = "GBT - Monitoring Games";
+            this.mainNotificationIcon.Visible = true;
+            // 
+            // mainContextMenu
+            // 
+            this.mainContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+            this.mainContextMenu.Name = "mainContextMenu";
+            this.mainContextMenu.Size = new System.Drawing.Size(93, 26);
+            this.mainContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.mainContextMenu_Opening);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(3, 514);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.saveChangesButton);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.showOptionsButton);
+            this.splitContainer2.Size = new System.Drawing.Size(733, 46);
+            this.splitContainer2.SplitterDistance = 361;
+            this.splitContainer2.TabIndex = 12;
             // 
             // Form1
             // 
@@ -246,11 +313,17 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Generalized Backup Tool";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.mainContextMenu.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -273,6 +346,11 @@
         private System.Windows.Forms.TextBox processNameTextBox;
         private System.Windows.Forms.Button saveChangesButton;
         private System.Windows.Forms.Button pathBrowseButton;
+        private System.Windows.Forms.NotifyIcon mainNotificationIcon;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip mainContextMenu;
+        private System.Windows.Forms.Button showOptionsButton;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }
 

@@ -52,6 +52,8 @@ namespace Generalized_Backup_Tool
             Program.gameList.Add(newGame);
 
             Program.writeGameList();
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

@@ -32,7 +32,11 @@ namespace Generalized_Backup_Tool
         private void addGameButton_Click(object sender, EventArgs e)
         {
             AddGame add = new AddGame();
-            add.Show();
+            add.ShowDialog();
+            if(add.DialogResult == DialogResult.OK)
+            {
+                refreshGamesList();
+            }
         }
 
         private void setMainPannel(Game game)
@@ -196,6 +200,34 @@ namespace Generalized_Backup_Tool
             {
                 this.savePathTextBox.Text = fbd.SelectedPath;
             }
+        }
+
+        private void mainContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.backupThread.Interrupt();
+            Program.backupThread.Abort();
+            Application.Exit();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(e.CloseReason == CloseReason.UserClosing)
+            {
+                mainNotificationIcon.Visible = true;
+                this.Hide();
+                e.Cancel = true;
+            }
+        }
+
+        private void showOptionsButton_Click(object sender, EventArgs e)
+        {
+            src.SettingsForm settings = new src.SettingsForm();
+            settings.Show();
         }
     }
 }

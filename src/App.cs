@@ -10,6 +10,7 @@ namespace Generalized_Backup_Tool
     {
         public static List<Game> gameList = new List<Game>();
         static Defaults defaults = new Defaults();
+        public static System.Threading.Thread backupThread;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -45,7 +46,7 @@ namespace Generalized_Backup_Tool
 
             // Start a background thread to do the
             // actual backing up.
-            System.Threading.Thread backupThread = new System.Threading.Thread(new System.Threading.ThreadStart(backUpGames));
+            backupThread = new System.Threading.Thread(new System.Threading.ThreadStart(backUpGames));
             backupThread.Start();
         }
 
@@ -64,71 +65,102 @@ namespace Generalized_Backup_Tool
 
             while (true)
             {
-                // TODO reload the game list to make sure new
-                // games are added.
-                processList = System.Diagnostics.Process.GetProcesses(cName);
+                try {
+                    // TODO reload the game list to make sure new
+                    // games are added.
+                    processList = System.Diagnostics.Process.GetProcesses(cName);
 
-                // Get the names of all running processes.
-                for (i = 0; i < processList.Count(); i++)
-                {
-                    pNameList.Add(processList.ElementAt(i).ProcessName);
-                }
-
-                for (i = 0; i < gameList.Count; i++)
-                {
-                    if (pNameList.Contains(gameList.ElementAt(i).processName))
+                    // Get the names of all running processes.
+                    for (i = 0; i < processList.Count(); i++)
                     {
-                        found = true;
-                        break;
+                        pNameList.Add(processList.ElementAt(i).ProcessName);
                     }
-                }
-                if (found)
-                {
-                    //Game at [i] is running!
-                    currentSlot = gameList.ElementAt(i).currentSlot;
-                    string backupPath = defaults.getBackupPath() + "\\" + gameList.ElementAt(i).gameName + "\\" + currentSlot;
-                    List<string> bFiles = gameList.ElementAt(i).fileNames;
-                    string currentFileName = bFiles + "_" + currentSlot;
 
-                    for (int k = 0; k < bFiles.Count; k++)
+                    for (i = 0; i < gameList.Count; i++)
                     {
-                        //Back up each file.
-                        try
+                        if (pNameList.Contains(gameList.ElementAt(i).processName))
                         {
-                            string sPath = System.IO.Path.Combine(gameList.ElementAt(i).savePath, bFiles.ElementAt(k));
-                            string dPath = System.IO.Path.Combine(backupPath, bFiles.ElementAt(k));
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found)
+                    {
+                        //Game at [i] is running!
+                        currentSlot = gameList.ElementAt(i).currentSlot;
+                        string backupPath = defaults.getBackupPath() + "\\" + gameList.ElementAt(i).gameName + "\\" + currentSlot;
+                        List<string> bFiles = gameList.ElementAt(i).fileNames;
+                        string currentFileName = bFiles + "_" + currentSlot;
 
-                            if (!System.IO.Directory.Exists(backupPath))
-                            {
-                                // Create the directory.
-                                System.IO.Directory.CreateDirectory(backupPath);
+                        if (bFiles == null)
+                        {
+                            // Back up all files, as none were specified.
+                            Console.WriteLine("Backing up all files in directory...");
+                            try {
+
+                                if (!System.IO.Directory.Exists(backupPath))
+                                {
+                                    // Create the directory.
+                                    System.IO.Directory.CreateDirectory(backupPath);
+                                }
+                                foreach (var file in System.IO.Directory.GetFiles(gameList.ElementAt(i).savePath))
+                                {
+                                    System.IO.File.Copy(file, System.IO.Path.Combine(backupPath, System.IO.Path.GetFileName(file)), true);
+                                    Console.WriteLine("Copying " + System.IO.Path.GetFileName(file));
+                                    // Note that subdirectories are not backed up. This will be an option in the future.
+                                }
                             }
-
-                            // Copy the files.
-                            System.IO.File.Copy(sPath, dPath, true);
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Error backing up games!");
+                            }
                         }
-                        catch (Exception e)
+                        else {
+                            for (int k = 0; k < bFiles.Count; k++)
+                            {
+                                //Back up each file.
+                                try
+                                {
+                                    string sPath = System.IO.Path.Combine(gameList.ElementAt(i).savePath, bFiles.ElementAt(k));
+                                    string dPath = System.IO.Path.Combine(backupPath, bFiles.ElementAt(k));
+
+                                    if (!System.IO.Directory.Exists(backupPath))
+                                    {
+                                        // Create the directory.
+                                        System.IO.Directory.CreateDirectory(backupPath);
+                                    }
+
+                                    // Copy the files.
+                                    System.IO.File.Copy(sPath, dPath, true);
+                                }
+                                catch (Exception e)
+                                {
+                                    System.Console.WriteLine("Error backing up game. Please check all paths & file permissions.");
+                                }
+                            }
+                        }
+
+                        System.Console.WriteLine("Save files backed up to slot " + currentSlot);
+
+                        currentSlot++;
+                        gameList.ElementAt(i).currentSlot = currentSlot;
+                        using (System.IO.Stream stream = System.IO.File.Open("games.bin", System.IO.FileMode.Create))
                         {
-                            System.Console.WriteLine("Error backing up game. Please check all paths & file permissions.");
+                            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bin = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                            bin.Serialize(stream, gameList);
                         }
+                        System.Threading.Thread.Sleep(new TimeSpan(0, defaults.getSaveInterval(), 0));
+                        continue;
                     }
-
-                    System.Console.WriteLine("Save files backed up to slot " + currentSlot);
-
-                    currentSlot++;
-                    gameList.ElementAt(i).currentSlot = currentSlot;
-                    using (System.IO.Stream stream = System.IO.File.Open("games.bin", System.IO.FileMode.Create))
+                    else
                     {
-                        System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bin = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                        bin.Serialize(stream, gameList);
+                        System.Console.WriteLine("No running games detected. Retrying in 3 minutes.");
+                        System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
                     }
-                    System.Threading.Thread.Sleep(new TimeSpan(0, defaults.getSaveInterval(), 0));
-                    continue;
                 }
-                else
+                catch(System.Threading.ThreadInterruptedException e)
                 {
-                    System.Console.WriteLine("No running games detected. Retrying in 3 minutes.");
-                    System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
+                    Console.WriteLine("Exiting backup thread...");
                 }
             }
         }
