@@ -29,3 +29,9 @@ SOURCES += main.cpp\
 HEADERS  += main.h
 
 FORMS    += main.ui
+
+DISTFILES += \
+    res/questionmark.png
+
+RESOURCES += \
+    images.qrc

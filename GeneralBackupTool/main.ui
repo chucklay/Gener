@@ -35,7 +35,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
+      <widget class="QWidget" name="gameListContents">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -44,8 +44,32 @@
          <height>408</height>
         </rect>
        </property>
-       <zorder></zorder>
-       <zorder></zorder>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Games</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="gameListWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addGameButton">
+          <property name="text">
+           <string>Add New</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

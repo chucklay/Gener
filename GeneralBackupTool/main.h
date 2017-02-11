@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include <QMainWindow>
+#include <QListWidgetItem>
 
 namespace Ui {
 class Main;
