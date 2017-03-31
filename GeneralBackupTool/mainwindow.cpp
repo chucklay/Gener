@@ -12,3 +12,14 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_actionSettings_triggered()
+{
+    appsettings = new AppSettings();
+    appsettings->show();
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    exit(0);
+}

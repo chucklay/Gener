@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "appsettings.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,8 +16,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_actionSettings_triggered();
+
+    void on_actionExit_triggered();
+
 private:
     Ui::MainWindow *ui;
+    AppSettings *appsettings;
 };
 
 #endif // MAINWINDOW_H
