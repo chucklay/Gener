@@ -26,6 +26,8 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void on_games_list_currentRowChanged(int currentRow);
+
 private:
     Ui::MainWindow *ui;
     AppSettings *appsettings;

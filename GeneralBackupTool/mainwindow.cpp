@@ -30,3 +30,10 @@ void MainWindow::on_actionExit_triggered()
 {
     exit(0);
 }
+
+void MainWindow::on_games_list_currentRowChanged(int currentRow)
+{
+    /* Set the selected game as current. */
+    Game *current_game = game_list.at(currentRow);
+    // TODO Put the values here in their appropreate places.
+}

@@ -51,12 +51,16 @@ int main(int argc, char *argv[])
     QListWidget *game_list_view = w.get_games_list_view();
 
     for(unsigned int i = 0; i < game_list.size(); i++){
-        QListWidgetItem *item;
-        if(game_list.at(i)->icon_path != ""){
-            item = new QListWidgetItem(QIcon(":/questionmark.png"), QString::fromStdString(game_list.at(i)->name), game_list_view);
+        QListWidgetItem *item = new QListWidgetItem;
+        item->setText(QString::fromStdString(game_list.at(i)->name));
+        if(game_list.at(i)->icon_path == ""){
+            item->setIcon(QIcon(":/questionmark.png"));
         } else {
-            item = new QListWidgetItem(QIcon(QString::fromStdString(game_list.at(i)->icon_path)), QString::fromStdString(game_list.at(i)->name), game_list_view);
+            item->setIcon(QIcon(QString::fromStdString(game_list.at(i)->icon_path)));
         }
+        item->setSizeHint(QSize(250, 50));
+        game_list_view->addItem(item);
     }
+    game_list_view->setCurrentRow(0);
     return a.exec();
 }
