@@ -47,3 +47,6 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage
 
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
+
+RESOURCES += \
+    images.qrc

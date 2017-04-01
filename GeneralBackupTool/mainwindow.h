@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 #include "appsettings.h"
+#include <QListWidget>
+
+class Game;
+extern std::vector<Game *> games_list;
 
 namespace Ui {
 class MainWindow;
@@ -15,6 +19,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QListWidget *get_games_list_view();
 
 private slots:
     void on_actionSettings_triggered();

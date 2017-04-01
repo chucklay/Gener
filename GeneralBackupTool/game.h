@@ -26,9 +26,6 @@ class Game {
 
     public:
         Game();
-        read(istream &stream);
-        write(ostream &stream);
-
         bool show;
         bool override;
         string name;
@@ -39,7 +36,7 @@ class Game {
         string icon_path;
 };
 
-Game::Game(void){
+Game::Game(){
     // Public constructor
     this->show = true;
     this->override = false;
