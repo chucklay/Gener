@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GAME_H
 #define GAME_H
 #include <boost/archive/text_iarchive.hpp>
@@ -21,7 +22,9 @@ class Game {
         ar & interval;
         ar & override_path;
         ar & profiles;
+        ar & process_name;
         ar & icon_path;
+        ar & active_profile;
     }
 
     public:
@@ -33,19 +36,9 @@ class Game {
         double interval;
         string override_path;
         std::vector<string> profiles;
+        string process_name;
         string icon_path;
+        int active_profile;
 };
-
-Game::Game(){
-    // Public constructor
-    this->show = true;
-    this->override = false;
-    this->name = "Game Name";
-    this->save_path = "Save Directory";
-    this->interval = 5.0;
-    this->override_path = "";
-    this->profiles = {"Default"};
-    this->icon_path = "";
-}
 
 #endif // GAME_H

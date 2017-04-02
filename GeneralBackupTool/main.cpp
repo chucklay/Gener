@@ -1,22 +1,21 @@
 #include <fstream>
-#include "game.h"
 #include <fstream>
 #include <iostream>
-#include "mainwindow.h"
 #include <QApplication>
 #include <QIcon>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QString>
-#include "settings.h"
 #include <string>
 #include <sys/stat.h>
+#include "mainwindow.h"
+#include "settings.h"
+#include "game.h"
 
 #define DATA_PATH  "data.bin"
 #define SETTINGS_PATH "settings.bin"
 
 using namespace std;
-
 
 std::vector<Game*> game_list;
 Settings *program_settings;

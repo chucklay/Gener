@@ -25,7 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    appsettings.cpp
+    appsettings.cpp \
+    game.cpp
 
 HEADERS  += mainwindow.h \
     appsettings.h \
@@ -35,6 +36,9 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     appsettings.ui
 
+win32:LIBS += -luser32
+win32:LIBS += -lpsapi
+win32:LIBS += -lkernel32
 
 win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_serialization-mgw53-mt-1_63
 else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_serialization-mgw53-mt-1_63

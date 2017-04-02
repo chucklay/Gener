@@ -145,23 +145,4 @@ void MainWindow::on_remove_game_button_clicked()
 void MainWindow::on_pushButton_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Save Directory"), "/", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if(dir != ""){
-        ui->save_path_text->setText(dir);
-    }
-}
-
-void MainWindow::on_backup_override_browse_button_clicked()
-{
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Save Directory"), "/", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if(dir != ""){
-        ui->backup_override_path->setText(dir);
-    }
-}
-
-void MainWindow::on_icon_select_button_clicked()
-{
-    QString imgDir = QFileDialog::getOpenFileName(this, tr("Icon"), "/", tr("Images (*.png *.xpm *.jpg)"));
-    if(imgDir != ""){
-        ui->icon_select_button->setIcon(QIcon(imgDir));
-    }
 }
