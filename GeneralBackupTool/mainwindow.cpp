@@ -6,7 +6,9 @@
 #include <tchar.h>
 #include <psapi.h>
 #include <iostream>
+#include <fstream>
 #include <QFileDialog>
+#include <boost/serialization/vector.hpp>
 
 #ifndef UNICODE
     typedef std::string String;
@@ -121,6 +123,10 @@ void MainWindow::setGame(Game *game) {
     ui->profile_select_box->setCurrentIndex(game->active_profile);
     if(game->icon_path != "") {
         ui->icon_select_button->setIcon(QIcon(QString::fromStdString(game->icon_path)));
+        ui->icon_path_text->setText(QString::fromStdString(game->icon_path));
+    } else {
+        ui->icon_select_button->setIcon(QIcon(":/questionmark.png"));
+        ui->icon_path_text->setText(QString(""));
     }
 }
 
@@ -138,6 +144,12 @@ void MainWindow::on_remove_game_button_clicked()
             int selected_game = ui->games_list->currentRow();
             game_list.erase(game_list.begin() + selected_game);
             qDeleteAll(ui->games_list->selectedItems());
+
+            std::ofstream ofs("data.bin");
+            boost::archive::text_oarchive oa(ofs);
+            oa & game_list;
+
+            MainWindow::on_games_list_currentRowChanged(ui->games_list->currentRow());
         }
     }
 }
@@ -163,5 +175,45 @@ void MainWindow::on_icon_select_button_clicked()
     QString imgDir = QFileDialog::getOpenFileName(this, tr("Icon"), "/", tr("Images (*.png *.xpm *.jpg)"));
     if(imgDir != ""){
         ui->icon_select_button->setIcon(QIcon(imgDir));
+        ui->icon_path_text->setText(imgDir);
+    }
+}
+
+void MainWindow::on_cancel_button_clicked()
+{
+    int currentRow = ui->games_list->currentRow();
+    if(currentRow < game_list.size()){
+        /* Set the selected game as current. */
+        Game *current_game = game_list.at(currentRow);
+        setGame(current_game);
+    }
+}
+
+void MainWindow::on_save_button_clicked()
+{
+    int current_row = ui->games_list->currentRow();
+    if(current_row < game_list.size()) {
+        Game *current_game = game_list.at(current_row);
+        current_game->show = true;
+        current_game->override = ui->backup_override_enabled->isChecked();
+        current_game->name = ui->game_name->text().toStdString();
+        current_game->save_path = ui->save_path_text->text().toStdString();
+        current_game->interval = ui->save_interval_spinner->value();
+        current_game->override_path = ui->backup_override_path->text().toStdString();
+        std::vector<string> profiles;
+        for(auto i = 0; i < ui->profile_select_box->count(); i++) {
+            profiles.push_back(ui->profile_select_box->itemText(i).toStdString());
+        }
+        current_game->profiles = profiles;
+        current_game->active_profile = ui->profile_select_box->currentIndex();\
+        current_game->process_name = ui->process_name_box->currentText().toStdString();
+        current_game->icon_path = ui->icon_path_text->text().toStdString();
+
+        ui->games_list->item(current_row)->setText(QString::fromStdString(current_game->name));
+        ui->games_list->item(current_row)->setIcon(QIcon(QString::fromStdString(current_game->icon_path)));
+
+        std::ofstream ofs("data.bin");
+        boost::archive::text_oarchive oa(ofs);
+        oa & game_list;
     }
 }
