@@ -12,19 +12,20 @@ class Settings {
         friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive & ar, const unsigned int version){
-            ar & default_backup_path;
-            ar & enabled;
+            if(version > 0){
+                ar & default_backup_path;
+                ar & enabled;
+                ar & minimize_taskbar;
+            }
         }
 
     public:
         Settings();
         string default_backup_path;
         bool enabled;
+        bool minimize_taskbar;
 };
 
-Settings::Settings(void) {
-    this->enabled = false;
-    this->default_backup_path = "";
-}
+BOOST_CLASS_VERSION(Settings, 1);
 
 #endif // SETTINGS_H

@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#define DATA_PATH  "data.bin"
+
 using namespace std;
 
 class Game {
@@ -15,20 +17,26 @@ class Game {
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version){
-        ar & show;
-        ar & override;
-        ar & name;
-        ar & save_path;
-        ar & interval;
-        ar & override_path;
-        ar & profiles;
-        ar & process_name;
-        ar & icon_path;
-        ar & active_profile;
+        if(version > 2){
+            ar & show;
+            ar & override;
+            ar & name;
+            ar & save_path;
+            ar & override_path;
+            ar & profiles;
+            ar & process_name;
+            ar & icon_path;
+            ar & active_profile;
+            ar & backups_enabled;
+            ar & save_slots;
+            ar & active_slot;
+            ar & interval;
+        }
     }
 
     public:
         Game();
+        bool backups_enabled;
         bool show;
         bool override;
         string name;
@@ -39,6 +47,10 @@ class Game {
         string process_name;
         string icon_path;
         int active_profile;
+        int save_slots;
+        int active_slot;
 };
+
+BOOST_CLASS_VERSION(Game, 3);
 
 #endif // GAME_H

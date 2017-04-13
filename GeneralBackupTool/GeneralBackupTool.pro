@@ -26,12 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     appsettings.cpp \
-    game.cpp
+    game.cpp \
+    settings.cpp \
+    backup.cpp
 
 HEADERS  += mainwindow.h \
     appsettings.h \
     game.h \
-    settings.h
+    settings.h \
+    backup.h
 
 FORMS    += mainwindow.ui \
     appsettings.ui
@@ -51,6 +54,25 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage
 
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
+
+win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_thread-mgw53-mt-1_63
+else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_thread-mgw53-mt-1_63
+
+INCLUDEPATH += 'F:/Program Files/Boost/stage'
+DEPENDPATH += 'F:/Program Files/Boost/stage'
+
+win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_filesystem-mgw53-mt-1_63
+else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_filesystem-mgw53-mt-1_63
+
+INCLUDEPATH += 'F:/Program Files/Boost/stage'
+DEPENDPATH += 'F:/Program Files/Boost/stage'
+
+win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_chrono-mgw53-mt-1_63
+else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_chrono-mgw53-mt-1_63
+
+INCLUDEPATH += 'F:/Program Files/Boost/stage'
+DEPENDPATH += 'F:/Program Files/Boost/stage'
+
 
 RESOURCES += \
     images.qrc

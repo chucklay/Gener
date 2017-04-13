@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QInputDialog>
 #include <boost/serialization/vector.hpp>
 
 #ifndef UNICODE
@@ -32,8 +34,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionSettings_triggered()
 {
-    appsettings = new AppSettings();
-    appsettings->show();
+    appsettings = new AppSettings(this);
+    appsettings->exec();
 }
 
 QListWidget *MainWindow::get_games_list_view()
@@ -100,7 +102,7 @@ void MainWindow::setGame(Game *game) {
 #else
                 pname = QString::fromStdString(szProcessName);
 #endif
-                if(pname != "<unknown>") {
+                if(pname != "<unknown>" && !pNameList.contains(pname)) {
                     pNameList.append(pname);
                 }
                 CloseHandle(hProcess);
@@ -128,6 +130,7 @@ void MainWindow::setGame(Game *game) {
         ui->icon_select_button->setIcon(QIcon(":/questionmark.png"));
         ui->icon_path_text->setText(QString(""));
     }
+    ui->game_enabled_box->setChecked(game->backups_enabled);
 }
 
 void MainWindow::on_backup_override_enabled_clicked()
@@ -145,7 +148,7 @@ void MainWindow::on_remove_game_button_clicked()
             game_list.erase(game_list.begin() + selected_game);
             qDeleteAll(ui->games_list->selectedItems());
 
-            std::ofstream ofs("data.bin");
+            std::ofstream ofs(DATA_PATH);
             boost::archive::text_oarchive oa(ofs);
             oa & game_list;
 
@@ -194,6 +197,7 @@ void MainWindow::on_save_button_clicked()
     int current_row = ui->games_list->currentRow();
     if(current_row < game_list.size()) {
         Game *current_game = game_list.at(current_row);
+        current_game->backups_enabled = ui->game_enabled_box->isChecked();
         current_game->show = true;
         current_game->override = ui->backup_override_enabled->isChecked();
         current_game->name = ui->game_name->text().toStdString();
@@ -208,12 +212,53 @@ void MainWindow::on_save_button_clicked()
         current_game->active_profile = ui->profile_select_box->currentIndex();\
         current_game->process_name = ui->process_name_box->currentText().toStdString();
         current_game->icon_path = ui->icon_path_text->text().toStdString();
+        current_game->save_slots = ui->save_slots_spinner->value();
 
         ui->games_list->item(current_row)->setText(QString::fromStdString(current_game->name));
         ui->games_list->item(current_row)->setIcon(QIcon(QString::fromStdString(current_game->icon_path)));
 
-        std::ofstream ofs("data.bin");
+        std::ofstream ofs(DATA_PATH);
         boost::archive::text_oarchive oa(ofs);
         oa & game_list;
+    }
+}
+
+void MainWindow::on_add_profile_button_clicked()
+{
+    bool ok;
+    QString new_profile_name = QInputDialog::getText(this, tr("New Save Profile"),
+                                                         tr("Profile Name:"), QLineEdit::Normal,
+                                                         tr(""), &ok);
+    if(ok && !new_profile_name.isEmpty()) {
+        int current_row = ui->games_list->currentRow();
+        Game *current_game = game_list.at(current_row);
+        bool present = false;
+        for(auto i = 0; i < current_game->profiles.size(); i++){
+            if(current_game->profiles.at(i).compare(new_profile_name.toStdString()) == 0){
+                present = true;
+            }
+        }
+        if(!present){
+            current_game->profiles.push_back(new_profile_name.toStdString());
+            ui->profile_select_box->addItems(QStringList() << new_profile_name);
+        }
+    }
+}
+
+void MainWindow::on_remove_profile_button_clicked()
+{
+    if(ui->profile_select_box->count() > 1){
+        QMessageBox::StandardButton do_it;
+        do_it = QMessageBox::question(this, "Delete Profile", "Are you sure you want to remove this profile?\nAll saves from this profile will be deleted!",
+                                      QMessageBox::Yes | QMessageBox::Cancel);
+        if(do_it == QMessageBox::Yes){
+            int current_row = ui->games_list->currentRow();
+            Game *current_game = game_list.at(current_row);
+            int selected_profile = ui->profile_select_box->currentIndex();
+            current_game->profiles.erase(current_game->profiles.begin() + selected_profile);
+            ui->profile_select_box->removeItem(selected_profile);
+
+            // TODO Delete save file for this profile on disk
+        }
     }
 }

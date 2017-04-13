@@ -1,3 +1,8 @@
+#include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/scoped_thread.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <fstream>
 #include <fstream>
 #include <iostream>
@@ -11,9 +16,7 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "game.h"
-
-#define DATA_PATH  "data.bin"
-#define SETTINGS_PATH "settings.bin"
+#include "backup.h"
 
 using namespace std;
 
@@ -26,8 +29,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    struct stat buffer;
-    if(stat (SETTINGS_PATH, &buffer) == 0) {
+    if(boost::filesystem::exists(SETTINGS_PATH)) {
         // Settings exist. Read them in.
         std::ifstream ifs(SETTINGS_PATH);
         boost::archive::text_iarchive ia(ifs);
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
         program_settings = new Settings;
     }
 
-    if(stat (DATA_PATH, &buffer) == 0) {
+    if(boost::filesystem::exists(DATA_PATH)) {
         // There is existing data.
         std::ifstream ifs(DATA_PATH);
         boost::archive::text_iarchive ia(ifs);
@@ -61,5 +63,11 @@ int main(int argc, char *argv[])
         game_list_view->addItem(item);
     }
     game_list_view->setCurrentRow(0);
+
+    if(program_settings->enabled && boost::filesystem::is_directory(program_settings->default_backup_path)){
+        // Launch the process in another thread.
+        boost::scoped_thread<> backup_thread{boost::thread{backup_loop}};
+    }
+
     return a.exec();
 }
