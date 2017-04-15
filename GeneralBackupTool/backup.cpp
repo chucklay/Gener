@@ -11,6 +11,7 @@
 #include <tchar.h>
 #include <psapi.h>
 
+
 using namespace std;
 
 extern Settings *program_settings;
@@ -30,6 +31,7 @@ void backup_game(Game *game){
                 if(!boost::filesystem::is_directory(dest_path)){
                     boost::filesystem::create_directories(dest_path);
                 }
+
                 boost::filesystem::copy_directory(game->save_path, dest_path);
             }
         }
@@ -83,5 +85,12 @@ void backup_loop(){
                 backup_game(current_game);
             }
         }
+    }
+}
+
+void test_thread(){
+    while(true){
+        cout << "In thread test loop...\n";
+        boost::this_thread::sleep_for(boost::chrono::seconds(15));
     }
 }

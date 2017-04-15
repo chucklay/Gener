@@ -22,6 +22,8 @@ using namespace std;
 
 std::vector<Game*> game_list;
 Settings *program_settings;
+boost::thread backup_thread;
+bool backup_process_running = false;
 
 int main(int argc, char *argv[])
 {
@@ -66,7 +68,8 @@ int main(int argc, char *argv[])
 
     if(program_settings->enabled && boost::filesystem::is_directory(program_settings->default_backup_path)){
         // Launch the process in another thread.
-        boost::scoped_thread<> backup_thread{boost::thread{backup_loop}};
+        backup_thread = boost::thread(backup_loop);
+        backup_process_running = true;
     }
 
     return a.exec();

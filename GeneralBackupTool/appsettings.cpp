@@ -1,13 +1,19 @@
 #include <QFileDialog>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/scoped_thread.hpp>
 #include <fstream>
 #include "appsettings.h"
 #include "ui_appsettings.h"
 #include "settings.h"
+#include "backup.h"
 
 using namespace std;
 
 extern Settings *program_settings;
+extern bool backup_process_running;
+extern boost::thread backup_thread;
 
 AppSettings::AppSettings(QWidget *parent) :
     QDialog(parent),
@@ -41,6 +47,18 @@ void AppSettings::on_buttonBox_accepted()
     std::ofstream ofs(SETTINGS_PATH);
     boost::archive::text_oarchive oa(ofs);
     oa & program_settings;
+
+    if(ui->backups_enabled_checkbox->isChecked() && boost::filesystem::is_directory(ui->backup_path_text->text().toStdString()) && !backup_process_running){
+        // Launch the process in another thread.
+        backup_thread = boost::thread(backup_loop);
+        backup_process_running = true;
+    }
+
+    if((!ui->backups_enabled_checkbox->isChecked() || !boost::filesystem::is_directory(ui->backup_path_text->text().toStdString())) && backup_process_running){
+        // Stop the backup thread.
+        backup_thread.interrupt();
+        backup_process_running = false;
+    }
 
     this->destroy();
 }

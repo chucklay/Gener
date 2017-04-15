@@ -36,7 +36,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="backup_path_text"/>
+        <widget class="QLineEdit" name="backup_path_text">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
