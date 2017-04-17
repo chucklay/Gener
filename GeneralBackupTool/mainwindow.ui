@@ -111,14 +111,32 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="process_name_box">
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-            <property name="duplicatesEnabled">
-             <bool>false</bool>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QComboBox" name="process_name_box">
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <property name="duplicatesEnabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="process_refresh_button">
+              <property name="text">
+               <string>Refresh</string>
+              </property>
+              <property name="icon">
+               <iconset theme="view-refresh">
+                <normaloff>.</normaloff>.</iconset>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="save_location_label">
@@ -164,16 +182,39 @@
              <string> Minutes</string>
             </property>
             <property name="decimals">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="minimum">
              <double>1.000000000000000</double>
             </property>
             <property name="singleStep">
-             <double>0.100000000000000</double>
+             <double>1.000000000000000</double>
             </property>
             <property name="value">
              <double>5.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="save_slots_label">
+            <property name="text">
+             <string>Number of Save Slots</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="save_slots_spinner">
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="suffix">
+             <string> Saves</string>
+            </property>
+            <property name="value">
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -255,6 +296,20 @@
             </item>
            </layout>
           </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="game_enabled_label">
+            <property name="text">
+             <string>Backups Enabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QCheckBox" name="game_enabled_box">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="8" column="0">
            <widget class="QLabel" name="icon_path_label">
             <property name="text">
@@ -313,43 +368,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="game_enabled_label">
-            <property name="text">
-             <string>Backups Enabled</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QCheckBox" name="game_enabled_box">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="save_slots_label">
-            <property name="text">
-             <string>Number of Save Slots</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="save_slots_spinner">
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="suffix">
-             <string> Saves</string>
-            </property>
-            <property name="value">
-             <number>5</number>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>

@@ -5,6 +5,7 @@
 #include "appsettings.h"
 #include "game.h"
 #include <QListWidget>
+#include <windows.h>
 
 namespace Ui {
 class MainWindow;
@@ -45,6 +46,8 @@ private slots:
     void on_add_profile_button_clicked();
 
     void on_remove_profile_button_clicked();
+
+    void on_process_refresh_button_clicked();
 
 private:
     Ui::MainWindow *ui;

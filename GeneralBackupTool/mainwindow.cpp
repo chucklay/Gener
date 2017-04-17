@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <boost/serialization/vector.hpp>
+#include <Shlwapi.h>
+#pragma comment(lib, "Shlwapi.lib")
 
 #ifndef UNICODE
     typedef std::string String;
@@ -19,6 +21,7 @@
 #endif
 
 extern std::vector<Game*> game_list;
+QStringList pNameList;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -71,47 +74,62 @@ void MainWindow::on_add_game_button_clicked()
 }
 
 void MainWindow::setGame(Game *game) {
-    QList<QString> pNameList;
+    // Get window titles and processes:
+    // Much of this is similar to how OBS does it.
+    // I love OBS <3.
 
-    // Get list of running processes.
-    DWORD aProcesses[1024], cbNeeded, cProcesses;
-    unsigned int i;
-    if( EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded)) {
-        cProcesses = cbNeeded / sizeof(DWORD);
-        for (i = 0; i < cProcesses; i++) {
-            if(aProcesses[i] != 0) {
-                TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+    HWND hwnd_current = GetWindow(GetDesktopWindow(), GW_CHILD);
+    QStringList process_list;
+    do {
+        wchar_t str_window_name[MAX_PATH];
+        DWORD pid;
+        DWORD exStyles = (DWORD)GetWindowLongPtr(hwnd_current, GWL_EXSTYLE);
+        DWORD styles = (DWORD)GetWindowLongPtr(hwnd_current, GWL_STYLE);
 
-                HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
-                                              PROCESS_VM_READ,
-                                              FALSE, aProcesses[i]);
+        if(!((exStyles & WS_EX_TOOLWINDOW) == 0 && (styles & WS_CHILD) == 0)){
+            continue;
+        }
+        if(!GetWindowText(hwnd_current, str_window_name, MAX_PATH)){
+            continue;
+        }
+        GetWindowThreadProcessId(hwnd_current, &pid);
+        if(pid == GetCurrentProcessId()){
+            continue;
+        }
 
-                if(NULL != hProcess) {
-                    HMODULE hMod;
-                    DWORD cbNeeded;
+        wchar_t fileName[MAX_PATH];
+        LPWSTR file_name;
+        HANDLE hProcess;
+        hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE, pid);
+        if(hProcess){
+            DWORD dwSize = MAX_PATH;
+            QueryFullProcessImageName(hProcess, 0, fileName, &dwSize);
+            file_name = PathFindFileName(fileName);
+        }
+        CloseHandle(hProcess);
+        QString boxString = QString("[");
+        #ifdef UNICODE
+        QString q_file_name = QString::fromStdWString(file_name);
+        QString q_str_window_name = QString::fromStdWString(str_window_name);
+        #else
+        QString q_file_name = QString::fromStdString(file_name);
+        QString q_str_window_name = QString::fromStdString(str_window_name);
+        #endif
+        boxString.append(q_file_name);
+        boxString.append("] ");
+        boxString.append(q_str_window_name);
 
-                    if(EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded)) {
-                        GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
-                    }
-                }
-
-                QString pname;
-
-#ifdef UNICODE
-                pname = QString::fromStdWString(szProcessName);
-#else
-                pname = QString::fromStdString(szProcessName);
-#endif
-                if(pname != "<unknown>" && !pNameList.contains(pname)) {
-                    pNameList.append(pname);
-                }
-                CloseHandle(hProcess);
+        if(!q_file_name.isEmpty() && !q_str_window_name.isEmpty() && !pNameList.contains(boxString) && !process_list.contains(q_file_name)){
+            if(!q_str_window_name.endsWith("MSCTFIME UI") && !q_str_window_name.endsWith("Default IME")){
+                process_list.append(q_file_name);
+                pNameList.append(boxString);
             }
         }
-    }
+
+    } while (hwnd_current = GetNextWindow(hwnd_current, GW_HWNDNEXT));
 
     ui->game_name->setText(QString::fromStdString(game->name));
-    ui->process_name_box->setModel(new QStringListModel(pNameList));
+    ui->process_name_box->addItems(pNameList);
     ui->process_name_box->setCurrentText(QString::fromStdString(game->process_name));
     ui->save_path_text->setText(QString::fromStdString(game->save_path));
     ui->save_interval_spinner->setValue(game->interval);
@@ -261,4 +279,49 @@ void MainWindow::on_remove_profile_button_clicked()
             // TODO Delete save file for this profile on disk
         }
     }
+}
+
+void MainWindow::on_process_refresh_button_clicked()
+{
+    QList<QString> pNameList;
+
+    // Get list of running processes.
+    DWORD aProcesses[1024], cbNeeded, cProcesses;
+    unsigned int i;
+    if( EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded)) {
+        cProcesses = cbNeeded / sizeof(DWORD);
+        for (i = 0; i < cProcesses; i++) {
+            if(aProcesses[i] != 0) {
+                TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+                HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
+                                              PROCESS_VM_READ,
+                                              FALSE, aProcesses[i]);
+
+                if(NULL != hProcess) {
+                    HMODULE hMod;
+                    DWORD cbNeeded;
+
+                    if(EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded)) {
+                        GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
+                    }
+                }
+
+                QString pname;
+
+#ifdef UNICODE
+                pname = QString::fromStdWString(szProcessName);
+#else
+                pname = QString::fromStdString(szProcessName);
+#endif
+                if(pname != "<unknown>" && !pNameList.contains(pname)) {
+                    pNameList.append(pname);
+                }
+                CloseHandle(hProcess);
+            }
+        }
+    }
+    QString current = ui->process_name_box->currentText();
+    ui->process_name_box->setModel(new QStringListModel(pNameList));
+    ui->process_name_box->setCurrentText(current);
 }

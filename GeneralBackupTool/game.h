@@ -30,6 +30,8 @@ class Game {
             ar & backups_enabled;
             ar & save_slots;
             ar & active_slot;
+        }
+        if(version > 3){
             ar & interval;
         }
     }
@@ -41,7 +43,7 @@ class Game {
         bool override;
         string name;
         string save_path;
-        double interval;
+        int interval;
         string override_path;
         std::vector<string> profiles;
         string process_name;
@@ -51,6 +53,6 @@ class Game {
         int active_slot;
 };
 
-BOOST_CLASS_VERSION(Game, 3);
+BOOST_CLASS_VERSION(Game, 4);
 
 #endif // GAME_H
