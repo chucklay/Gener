@@ -57,14 +57,16 @@ void backup_game(Game *game){
 }
 
 void backup_loop(){
-    cout << "backup loop running.\n";
     while(true){
         // Get the list of processes. Using QStringList so I can reuse code
         // because I'm lazy.
         bool found = false;
         QList<QString> pNameList;
+        // Get window titles and processes:
+        // Much of this is similar to how OBS does it.
+        // I love OBS <3.
+
         HWND hwnd_current = GetWindow(GetDesktopWindow(), GW_CHILD);
-        QStringList process_list;
         do {
             wchar_t str_window_name[MAX_PATH];
             DWORD pid;
@@ -81,6 +83,9 @@ void backup_loop(){
             if(pid == GetCurrentProcessId()){
                 continue;
             }
+            if(!IsWindowVisible(hwnd_current)){
+                continue;
+            }
 
             wchar_t fileName[MAX_PATH];
             LPWSTR file_name;
@@ -92,7 +97,6 @@ void backup_loop(){
                 file_name = PathFindFileName(fileName);
             }
             CloseHandle(hProcess);
-            QString boxString = QString("[");
             #ifdef UNICODE
             QString q_file_name = QString::fromStdWString(file_name);
             QString q_str_window_name = QString::fromStdWString(str_window_name);
@@ -100,21 +104,18 @@ void backup_loop(){
             QString q_file_name = QString::fromStdString(file_name);
             QString q_str_window_name = QString::fromStdString(str_window_name);
             #endif
-            boxString.append(q_file_name);
-            boxString.append("] ");
-            boxString.append(q_str_window_name);
 
-            if(!q_file_name.isEmpty() && !q_str_window_name.isEmpty() && !pNameList.contains(boxString) && !process_list.contains(q_file_name)){
+            if(!q_file_name.isEmpty() && !q_str_window_name.isEmpty() && !pNameList.contains(q_file_name)){
                 if(!q_str_window_name.endsWith("MSCTFIME UI") && !q_str_window_name.endsWith("Default IME")){
                     pNameList.append(q_file_name);
                 }
             }
 
         } while (hwnd_current = GetNextWindow(hwnd_current, GW_HWNDNEXT));
+
         for(auto i = 0; i < game_list.size(); i++){
             Game *current_game = game_list.at(i);
             string process = current_game->process_name.substr(current_game->process_name.find_first_of('[')+1, current_game->process_name.find_last_of(']')-1);
-            cout << process;
             if(pNameList.contains(QString::fromStdString(process))){
                 backup_game(current_game);
                 found = true;
@@ -124,12 +125,5 @@ void backup_loop(){
         if(!found){
             boost::this_thread::sleep_for(boost::chrono::minutes{5});
         }
-    }
-}
-
-void test_thread(){
-    while(true){
-        cout << "In thread test loop...\n";
-        boost::this_thread::sleep_for(boost::chrono::seconds(15));
     }
 }

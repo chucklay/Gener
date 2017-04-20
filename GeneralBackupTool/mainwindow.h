@@ -3,9 +3,11 @@
 
 #include <QMainWindow>
 #include "appsettings.h"
+#include "settings.h"
 #include "game.h"
 #include <QListWidget>
 #include <windows.h>
+#include <QCloseEvent>
 
 namespace Ui {
 class MainWindow;
@@ -48,6 +50,8 @@ private slots:
     void on_remove_profile_button_clicked();
 
     void on_process_refresh_button_clicked();
+
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;

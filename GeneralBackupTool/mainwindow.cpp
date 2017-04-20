@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <boost/serialization/vector.hpp>
 #include <Shlwapi.h>
+#include <QCloseEvent>
 #pragma comment(lib, "Shlwapi.lib")
 
 #ifndef UNICODE
@@ -21,6 +22,7 @@
 #endif
 
 extern std::vector<Game*> game_list;
+extern Settings *program_settings;
 QStringList pNameList;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -94,6 +96,9 @@ void MainWindow::setGame(Game *game) {
         }
         GetWindowThreadProcessId(hwnd_current, &pid);
         if(pid == GetCurrentProcessId()){
+            continue;
+        }
+        if(!IsWindowVisible(hwnd_current)){
             continue;
         }
 
@@ -285,43 +290,74 @@ void MainWindow::on_process_refresh_button_clicked()
 {
     QList<QString> pNameList;
 
-    // Get list of running processes.
-    DWORD aProcesses[1024], cbNeeded, cProcesses;
-    unsigned int i;
-    if( EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded)) {
-        cProcesses = cbNeeded / sizeof(DWORD);
-        for (i = 0; i < cProcesses; i++) {
-            if(aProcesses[i] != 0) {
-                TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+    // Get window titles and processes:
+    // Much of this is similar to how OBS does it.
+    // I love OBS <3.
 
-                HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
-                                              PROCESS_VM_READ,
-                                              FALSE, aProcesses[i]);
+    HWND hwnd_current = GetWindow(GetDesktopWindow(), GW_CHILD);
+    QStringList process_list;
+    do {
+        wchar_t str_window_name[MAX_PATH];
+        DWORD pid;
+        DWORD exStyles = (DWORD)GetWindowLongPtr(hwnd_current, GWL_EXSTYLE);
+        DWORD styles = (DWORD)GetWindowLongPtr(hwnd_current, GWL_STYLE);
 
-                if(NULL != hProcess) {
-                    HMODULE hMod;
-                    DWORD cbNeeded;
+        if(!((exStyles & WS_EX_TOOLWINDOW) == 0 && (styles & WS_CHILD) == 0)){
+            continue;
+        }
+        if(!GetWindowText(hwnd_current, str_window_name, MAX_PATH)){
+            continue;
+        }
+        GetWindowThreadProcessId(hwnd_current, &pid);
+        if(pid == GetCurrentProcessId()){
+            continue;
+        }
+        if(!IsWindowVisible(hwnd_current)){
+            continue;
+        }
 
-                    if(EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded)) {
-                        GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
-                    }
-                }
+        wchar_t fileName[MAX_PATH];
+        LPWSTR file_name;
+        HANDLE hProcess;
+        hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE, pid);
+        if(hProcess){
+            DWORD dwSize = MAX_PATH;
+            QueryFullProcessImageName(hProcess, 0, fileName, &dwSize);
+            file_name = PathFindFileName(fileName);
+        }
+        CloseHandle(hProcess);
+        QString boxString = QString("[");
+        #ifdef UNICODE
+        QString q_file_name = QString::fromStdWString(file_name);
+        QString q_str_window_name = QString::fromStdWString(str_window_name);
+        #else
+        QString q_file_name = QString::fromStdString(file_name);
+        QString q_str_window_name = QString::fromStdString(str_window_name);
+        #endif
+        boxString.append(q_file_name);
+        boxString.append("] ");
+        boxString.append(q_str_window_name);
 
-                QString pname;
-
-#ifdef UNICODE
-                pname = QString::fromStdWString(szProcessName);
-#else
-                pname = QString::fromStdString(szProcessName);
-#endif
-                if(pname != "<unknown>" && !pNameList.contains(pname)) {
-                    pNameList.append(pname);
-                }
-                CloseHandle(hProcess);
+        if(!q_file_name.isEmpty() && !q_str_window_name.isEmpty() && !pNameList.contains(boxString) && !process_list.contains(q_file_name)){
+            if(!q_str_window_name.endsWith("MSCTFIME UI") && !q_str_window_name.endsWith("Default IME")){
+                process_list.append(q_file_name);
+                pNameList.append(boxString);
             }
         }
-    }
+
+    } while (hwnd_current = GetNextWindow(hwnd_current, GW_HWNDNEXT));
     QString current = ui->process_name_box->currentText();
     ui->process_name_box->setModel(new QStringListModel(pNameList));
     ui->process_name_box->setCurrentText(current);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(program_settings->minimize_taskbar){
+        // TODO Minimize to taskbar
+        event->accept();
+    }
+    else {
+        event->accept();
+    }
 }
