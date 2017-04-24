@@ -29,10 +29,12 @@ class Game {
             ar & active_profile;
             ar & backups_enabled;
             ar & save_slots;
-            ar & active_slot;
         }
         if(version > 3){
             ar & interval;
+        }
+        if(version > 4){
+            ar & active_slot;
         }
     }
 
@@ -50,9 +52,9 @@ class Game {
         string icon_path;
         int active_profile;
         int save_slots;
-        int active_slot;
+        std::vector<int> active_slot;
 };
 
-BOOST_CLASS_VERSION(Game, 4);
+BOOST_CLASS_VERSION(Game, 5);
 
 #endif // GAME_H

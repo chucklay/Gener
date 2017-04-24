@@ -2,6 +2,7 @@
 #define BACKUP_H
 #include "game.h"
 
+void restore_game(Game *game);
 void backup_game(Game *game);
 void backup_loop();
 void test_thread();

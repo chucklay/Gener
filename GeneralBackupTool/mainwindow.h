@@ -3,11 +3,15 @@
 
 #include <QMainWindow>
 #include "appsettings.h"
+#include "about.h"
 #include "settings.h"
 #include "game.h"
+#include "backup.h"
 #include <QListWidget>
 #include <windows.h>
 #include <QCloseEvent>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 namespace Ui {
 class MainWindow;
@@ -53,10 +57,19 @@ private slots:
 
     void closeEvent(QCloseEvent *event);
 
+    void realExit();
+
+    void restoreFromTray();
+
+    void on_actionAbout_triggered();
+
 private:
     Ui::MainWindow *ui;
     AppSettings *appsettings;
+    about *abt;
     void setGame(Game *game);
+    QSystemTrayIcon sys_tray_icon;
+    QMenu sys_tray_menu;
 };
 
 #endif // MAINWINDOW_H

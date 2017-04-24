@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <algorithm>
 #include <QStringListModel>
 #include <stdio.h>
 #include <windows.h>
@@ -24,6 +25,7 @@
 extern std::vector<Game*> game_list;
 extern Settings *program_settings;
 QStringList pNameList;
+bool tray_initialized = false;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,6 +42,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionSettings_triggered()
 {
     appsettings = new AppSettings(this);
+    appsettings->setWindowFlags(appsettings->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     appsettings->exec();
 }
 
@@ -231,8 +234,37 @@ void MainWindow::on_save_button_clicked()
         for(auto i = 0; i < ui->profile_select_box->count(); i++) {
             profiles.push_back(ui->profile_select_box->itemText(i).toStdString());
         }
+        bool changed = false;
+        if(profiles.size() != current_game->profiles.size()){
+            changed = true;
+        } else {
+            for(auto i = 0; i < profiles.size(); i++){
+                if(profiles.at(i).compare(current_game->profiles.at(i)) != 0){
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        if(changed){
+            std::vector<int> temp_activities;
+            for(auto i = 0; i < profiles.size(); i++){
+                ptrdiff_t position = std::find(current_game->profiles.begin(), current_game->profiles.end(), profiles.at(i)) - current_game->profiles.begin();
+                if(position < current_game->profiles.size()){
+                    temp_activities.push_back(current_game->active_slot.at(position));
+                } else {
+                    // This is a new profile.
+                    temp_activities.push_back(0);
+                }
+            }
+            current_game->active_slot = temp_activities;
+        }
+        string prior_active_profile = current_game->profiles.at(current_game->active_profile);
         current_game->profiles = profiles;
-        current_game->active_profile = ui->profile_select_box->currentIndex();\
+        current_game->active_profile = ui->profile_select_box->currentIndex();
+        if(prior_active_profile.compare(ui->profile_select_box->currentText().toStdString()) != 0){
+            // The profile has been changed! Restore the now-active profile.
+            restore_game(current_game);
+        }
         current_game->process_name = ui->process_name_box->currentText().toStdString();
         current_game->icon_path = ui->icon_path_text->text().toStdString();
         current_game->save_slots = ui->save_slots_spinner->value();
@@ -262,8 +294,8 @@ void MainWindow::on_add_profile_button_clicked()
             }
         }
         if(!present){
-            current_game->profiles.push_back(new_profile_name.toStdString());
             ui->profile_select_box->addItems(QStringList() << new_profile_name);
+            ui->profile_select_box->setCurrentIndex(ui->profile_select_box->findText(new_profile_name));
         }
     }
 }
@@ -272,16 +304,13 @@ void MainWindow::on_remove_profile_button_clicked()
 {
     if(ui->profile_select_box->count() > 1){
         QMessageBox::StandardButton do_it;
-        do_it = QMessageBox::question(this, "Delete Profile", "Are you sure you want to remove this profile?\nAll saves from this profile will be deleted!",
+        do_it = QMessageBox::question(this, "Delete Profile", "Are you sure you want to remove this profile?\nAll saves from this profile will be deleted when changes are saved!",
                                       QMessageBox::Yes | QMessageBox::Cancel);
         if(do_it == QMessageBox::Yes){
-            int current_row = ui->games_list->currentRow();
-            Game *current_game = game_list.at(current_row);
             int selected_profile = ui->profile_select_box->currentIndex();
-            current_game->profiles.erase(current_game->profiles.begin() + selected_profile);
             ui->profile_select_box->removeItem(selected_profile);
 
-            // TODO Delete save file for this profile on disk
+            // TODO Delete save file for this profile on disk, in on_save_button_clicked
         }
     }
 }
@@ -351,13 +380,40 @@ void MainWindow::on_process_refresh_button_clicked()
     ui->process_name_box->setCurrentText(current);
 }
 
+void MainWindow::realExit(){
+    QApplication::quit();
+}
+
+void MainWindow::restoreFromTray(){
+    sys_tray_icon.setVisible(false);
+    this->setVisible(true);
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(program_settings->minimize_taskbar){
-        // TODO Minimize to taskbar
-        event->accept();
+        if(!tray_initialized){
+            // TODO Minimize to taskbar
+            sys_tray_icon.setParent(this);
+            sys_tray_icon.setIcon(QIcon(":/questionmark.png"));
+            sys_tray_menu.addAction("Restore", this, SLOT(restoreFromTray()));
+            sys_tray_menu.addAction("Exit", this, SLOT(realExit()));
+            sys_tray_icon.setContextMenu(&sys_tray_menu);
+            sys_tray_icon.setToolTip(QString("General Backup Tool"));
+            tray_initialized = true;
+        }
+        this->setVisible(false);
+        sys_tray_icon.setVisible(true);
+        event->ignore();
     }
     else {
         event->accept();
     }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    abt = new about(this);
+    abt->setWindowFlags(abt->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    abt->exec();
 }

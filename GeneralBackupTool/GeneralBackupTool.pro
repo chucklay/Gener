@@ -28,16 +28,19 @@ SOURCES += main.cpp\
     appsettings.cpp \
     game.cpp \
     settings.cpp \
-    backup.cpp
+    backup.cpp \
+    about.cpp
 
 HEADERS  += mainwindow.h \
     appsettings.h \
     game.h \
     settings.h \
-    backup.h
+    backup.h \
+    about.h
 
 FORMS    += mainwindow.ui \
-    appsettings.ui
+    appsettings.ui \
+    about.ui
 
 win32:LIBS += -luser32
 win32:LIBS += -lpsapi
@@ -47,17 +50,11 @@ win32:LIBS += -lkernel32
 RESOURCES += \
     images.qrc
 
-
 win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_chrono-vc140-mt-1_63
 else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_chrono-vc140-mt-gd-1_63
 
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_chrono-vc140-mt-1_63.a'
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_chrono-vc140-mt-gd-1_63.a'
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_chrono-vc140-mt-1_63.lib'
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_chrono-vc140-mt-gd-1_63.lib'
 
 win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_filesystem-vc140-mt-1_63
 else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_filesystem-vc140-mt-gd-1_63
@@ -65,21 +62,11 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_filesystem-vc140-mt-1_63.a'
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_filesystem-vc140-mt-gd-1_63.a'
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_filesystem-vc140-mt-1_63.lib'
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_filesystem-vc140-mt-gd-1_63.lib'
-
 win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_serialization-vc140-mt-1_63
 else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_serialization-vc140-mt-gd-1_63
 
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_serialization-vc140-mt-1_63.a'
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_serialization-vc140-mt-gd-1_63.a'
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_serialization-vc140-mt-1_63.lib'
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_serialization-vc140-mt-gd-1_63.lib'
 
 win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_system-vc140-mt-1_63
 else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_system-vc140-mt-gd-1_63
@@ -87,18 +74,8 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_system-vc140-mt-1_63.a'
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_system-vc140-mt-gd-1_63.a'
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_system-vc140-mt-1_63.lib'
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_system-vc140-mt-gd-1_63.lib'
-
-win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_thread-vc140-mt-1_63
-else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -lboost_thread-vc140-mt-gd-1_63
+win32:CONFIG(release, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_thread-vc140-mt-1_63
+else:win32:CONFIG(debug, debug|release): LIBS += -L'F:/Program Files/Boost/stage/lib/' -llibboost_thread-vc140-mt-gd-1_63
 
 INCLUDEPATH += 'F:/Program Files/Boost'
 DEPENDPATH += 'F:/Program Files/Boost'
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_thread-vc140-mt-1_63.a'
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/libboost_thread-vc140-mt-gd-1_63.a'
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_thread-vc140-mt-1_63.lib'
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'F:/Program Files/Boost/stage/lib/boost_thread-vc140-mt-gd-1_63.lib'
