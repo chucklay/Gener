@@ -22,6 +22,18 @@ extern std::vector<Game *> game_list;
 
 namespace fs = boost::filesystem;
 
+string remove_invalid(string path){
+    string ret;
+    string illegalChars = "\\/:?\"<>|";
+    for(auto it = path.begin(); it < path.end(); ++it){
+        bool found = illegalChars.find(*it) != string::npos;
+        if(!found){
+            ret += *it;
+        }
+    }
+    return ret;
+}
+
 void restore_game(Game *game){
     //First, clear out the game's save directory
     if(boost::filesystem::is_directory(game->save_path)){
@@ -35,12 +47,12 @@ void restore_game(Game *game){
     // Now, restore
     boost::filesystem::path source_path;
     if(game->override){
-        source_path.append(game->override_path);
+        source_path.append(remove_invalid(game->override_path));
     } else {
-        source_path.append(program_settings->default_backup_path);
+        source_path.append(remove_invalid(program_settings->default_backup_path));
     }
-    source_path.append(game->name);
-    source_path.append(game->profiles.at(game->active_profile));
+    source_path.append(remove_invalid(game->name));
+    source_path.append(remove_invalid(game->profiles.at(game->active_profile)));
     if(game->active_slot.at(game->active_profile) != 0){
         source_path.append(boost::lexical_cast<std::string>(game->active_slot.at(game->active_profile) - 1));
     } else {
@@ -65,9 +77,9 @@ void backup_game(Game *game){
             } else {
                 boost::filesystem::path dest_path(program_settings->default_backup_path);
 
-                dest_path.append(game->name);
-                dest_path.append(game->profiles.at(game->active_profile));
-                dest_path.append(boost::lexical_cast<std::string>(game->active_slot.at(game->active_profile)));
+                dest_path.append(remove_invalid(game->name));
+                dest_path.append(remove_invalid(game->profiles.at(game->active_profile)));
+                dest_path.append(remove_invalid(boost::lexical_cast<std::string>(game->active_slot.at(game->active_profile))));
 
                 if(!boost::filesystem::is_directory(dest_path)){
                     boost::filesystem::create_directories(dest_path);
